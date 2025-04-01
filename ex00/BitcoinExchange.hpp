@@ -6,7 +6,7 @@
 /*   By: ewu <ewu@student.42heilbronn.de>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:43:33 by ewu               #+#    #+#             */
-/*   Updated: 2025/04/01 12:47:01 by ewu              ###   ########.fr       */
+/*   Updated: 2025/04/01 13:15:17 by ewu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ private:
 	//map stores date and exchange_rate; map<keyType, valueType> mapName
 	bool validDate(const std::string& _date) const;
 	bool validValue(const std::string& _val) const;
-	void readDB(const std::string& csvFile); //take REF of .CSV file and read
+	void readDB();
+	// void readDB(const std::string& _csvFile); //take REF of .CSV file and read
 	
 public:
 	BitcoinExchange();
@@ -48,7 +49,13 @@ public:
 		}
 	};
 	class InvalidValException : public std::exception
-	{};
+	{
+	public:
+		const char* what() const throw()
+		{
+			return ("\033[33mInvalid value!\n Should within 0-1000!\n\033[0m");
+		}
+	};
 };
 
 #endif
