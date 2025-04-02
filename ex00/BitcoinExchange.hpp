@@ -6,7 +6,7 @@
 /*   By: ewu <ewu@student.42heilbronn.de>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:43:33 by ewu               #+#    #+#             */
-/*   Updated: 2025/04/01 13:15:17 by ewu              ###   ########.fr       */
+/*   Updated: 2025/04/01 16:18:18 by ewu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,34 +32,37 @@ private:
 	bool validDate(const std::string& _date) const;
 	bool validValue(const std::string& _val) const;
 	void readDB();
-	// void readDB(const std::string& _csvFile); //take REF of .CSV file and read
+	//void readDB(const std::string& _csvFile); //take REF of .CSV file and read
 	
 public:
 	BitcoinExchange();
 	BitcoinExchange(const BitcoinExchange& other);
 	BitcoinExchange& operator=(const BitcoinExchange& other);
 	~BitcoinExchange();
-	void readInput(const std::string& inFile) const; //read user input.txt
-	class InvalidDateException : public std::exception
-	{
-	public:
-		const char* what() const throw()
-		{
-			return ("Date is invalid!\n"); //maybe more cases specified, do later
-		}
-	};
-	class InvalidValException : public std::exception
-	{
-	public:
-		const char* what() const throw()
-		{
-			return ("\033[33mInvalid value!\n Should within 0-1000!\n\033[0m");
-		}
-	};
+	void readInput(const std::string& inFile) const;
+	//read user input.txt
+	float floorDate(const std::string& date) const;
+	//to floor the data in .csv to find closest match
 };
 
 #endif
 
+// class InvalidDateException : public std::exception
+// {
+// public:
+// 	const char* what() const throw()
+// 	{
+// 		return ("Date is invalid!\n"); //maybe more cases specified, do later
+// 	}
+// };
+// class InvalidValException : public std::exception
+// {
+// public:
+// 	const char* what() const throw()
+// 	{
+// 		return ("\033[33mInvalid value!\n Should within 0-1000!\n\033[0m");
+// 	}
+// };
 /**
  * 1. read and parse CSV into map
  * 2. read input
