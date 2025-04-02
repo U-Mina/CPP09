@@ -6,7 +6,7 @@
 /*   By: ewu <ewu@student.42heilbronn.de>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 12:50:31 by ewu               #+#    #+#             */
-/*   Updated: 2025/04/02 14:42:21 by ewu              ###   ########.fr       */
+/*   Updated: 2025/04/02 15:18:05 by ewu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,16 @@ static bool _checkFeb(int yy, int dd)
 	if ((yy % 4 == 0 && yy % 100 != 0) || yy % 400 == 0)
 	{
 		if (dd > 29)
+		{
+			std::cerr << "Error: over 29th on Feb\n";
 			return false;
+		}
 	}
 	if (dd > 28)
+	{
+		std::cerr << "Error: no 29th Feb this year => " << yy << '\n';
 		return false;
+	}
 	return true;
 }
 
@@ -64,16 +70,25 @@ static bool _range(std::string& yy, std::string& mm, std::string& dd)
 		return false;
 	int month = std::stoi(mm);
 	if (month < 1 || month > 12)
+	{
+		std::cerr << "Error: invalid month => " << month << '\n';
 		return false;
+	}
 	int day = std::stoi(dd);
 	if (day > 31)
+	{
+		std::cerr << "Error: over 31 days => " << day << '\n';	
 		return false;
-	if (!_checkFeb)
+	}
+	if (!_checkFeb(year, day))
 		return (false);
 	if (month == 4 || month == 6 || month == 9 || month == 11) //30 days month
 	{
 		if (day > 30)
+		{
+			std::cerr << "Error: no 31st days in month => " << month << '\n';
 			return false;
+		}
 	}
 	return true;
 }
@@ -101,7 +116,7 @@ bool BitcoinExchange::validValue(const std::string& _val) const
 		float _rate = std::stof(_val, &pos); //&pos the index of 1st non-numeric char
 		if (_val.size() != pos)
 		{
-			std::cerr << "Error:\nInvalid value: " << _val << "\n";
+			std::cerr << "Error: Invalid value: " << _val << "\n";
 			return false;
 		}
 		if (_rate < 0.00f)
@@ -189,19 +204,22 @@ void BitcoinExchange::readInput(const std::string& inFile) const
 {
 	std::ifstream input(inFile);
 	if (!input.is_open())
-		throw std::runtime_error("Error:\nCannot open input.txt\n");
+		throw std::runtime_error("Error: could not open file\n");
 	std::string line;
+	std::getline(input, line); //skip 1st line
 	while (std::getline(input, line))
 	{
 		std::stringstream tmpIn(line);
 		std::string inDate;
 		std::string inVal;
-		if (std::getline(tmpIn, inDate, '|') && std::getline(tmpIn, inVal)) // date | rate
-		{
+		if (std::getline(tmpIn, inDate, '|') && std::getline(tmpIn, inVal))
+		{// date | rate
 			_trimSpace(inDate);
 			_trimSpace(inVal);
+			// inDate.erase(std::remove_if(inDate.begin(), inDate.end(), ::isspace), inDate.end());
+			// inVal.erase(std::remove_if(inVal.begin(), inVal.end(), ::isspace), inVal.end());
 			if (!validDate(inDate)) {
-				std::cerr << "Error: bad input => " << inDate << '\n';
+				// std::cerr << "Error: invalid date => " << inDate << '\n';
 				continue; //the read will continue to next line (behaviour of test case)
 			}
 			if (!validValue(inVal))
@@ -215,7 +233,7 @@ void BitcoinExchange::readInput(const std::string& inFile) const
 				std::cerr << "Error: " << e.what() << '\n';
 			}
 		} else {
-			std::cerr << "Invalid Input.txt\n";
+			std::cerr << "Error: bad input => " << inDate << '\n';
 		}
 	}
 	input.close();
